@@ -40,6 +40,8 @@ import {
 function Dashboard() {
   const [product, setProduct] = useState([]);
   const [blog, setBlog] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,6 +60,30 @@ function Dashboard() {
       try {
         const response = await axios.get("http://localhost:1010/productdetails/getproductdetails");
         setBlog(response.data);
+      } catch (error) {
+        console.log(`Error getting Blog from frontend: ${error}`);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:1010/users/getusers");
+        setUsers(response.data);
+      } catch (error) {
+        console.log(`Error getting Blog from frontend: ${error}`);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:1010/orders/getorder");
+        setOrders(response.data);
       } catch (error) {
         console.log(`Error getting Blog from frontend: ${error}`);
       }
@@ -133,7 +159,7 @@ function Dashboard() {
                   <Col md="8" xs="7">
                     <div className="numbers">
                       <p className="card-category">users</p>
-                      <CardTitle tag="p">23</CardTitle>
+                      <CardTitle tag="p">{users.length}</CardTitle>
                       <p />
                     </div>
                   </Col>
@@ -158,8 +184,8 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Followers</p>
-                      <CardTitle tag="p">+45K</CardTitle>
+                      <p className="card-category">Orders</p>
+                      <CardTitle tag="p">{orders.length}</CardTitle>
                       <p />
                     </div>
                   </Col>
@@ -174,7 +200,7 @@ function Dashboard() {
             </Card>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col md="12">
             <Card>
               <CardHeader>
@@ -251,7 +277,7 @@ function Dashboard() {
               </CardFooter>
             </Card>
           </Col>
-        </Row>
+        </Row> */}
       </div>
     </>
   );

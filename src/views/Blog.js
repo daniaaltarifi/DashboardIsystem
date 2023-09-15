@@ -256,6 +256,8 @@ function Blog() {
         <Row>
           <Col md="12">
             <Card className="card-user">
+            {isUpdateFormVisible && (
+              <div>
               <CardHeader>
                 <CardTitle tag="h5">Update Blog</CardTitle>
               </CardHeader>
@@ -323,7 +325,9 @@ function Blog() {
                   </Row>
                 </Form>
               </CardBody>
-            </Card>
+              </div>
+              )}
+              </Card>
           </Col>
         </Row>
       </div>

@@ -53,20 +53,20 @@ function Sidebar(props) {
       data-active-color={props.activeColor}
     >
       <div className="logo">
-        <a
+        {/* <a
           href="https://www.creative-tim.com"
           className="simple-text logo-mini"
-        >
+        > */}
           <div className="logo-img">
-            <img src={logo} alt="react-logo" />
+            <img src={require('../../assets/img/iSystem logo -04.png')} alt="react-logo"style={{height:"30%",width:"80%"}}/>
           </div>
-        </a>
-        <a
+        {/* </a> */}
+        {/* <a
          
           className="simple-text logo-normal"
         >
          iSystem
-        </a>
+        </a> */}
       </div>
       <div className="sidebar-wrapper" ref={sidebar}>
         <Nav>

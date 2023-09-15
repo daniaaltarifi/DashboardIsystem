@@ -123,7 +123,7 @@ function FixedPlugin(props) {
               />
             </div>
           </li>
-          <li className="button-container">
+          {/* <li className="button-container">
             <Button
               href="https://www.creative-tim.com/product/paper-dashboard-react?ref=pdr-fixed-plugin"
               color="primary"
@@ -155,7 +155,7 @@ function FixedPlugin(props) {
             >
               Get pro version
             </Button>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>

@@ -26,6 +26,8 @@ import UserPage from "views/User.js";
 import UpgradeToPro from "views/Upgrade.js";
 import AddProduct from 'views/AddProduct.js'
 import Blog from "views/Blog";
+import UsersCRUD from "views/UsersCRUD";
+import Orders from "views/Orders";
 var routes = [
   {
     path: "/dashboard",
@@ -56,6 +58,13 @@ var routes = [
   //   layout: "/admin",
   // },
   {
+    path: "/usercrud",
+    name: "Users",
+    icon: "nc-icon nc-single-02",
+    component: <UsersCRUD />,
+    layout: "/admin",
+  },
+  {
     path: "/user-page",
     name: "User Profile",
     icon: "nc-icon nc-single-02",
@@ -74,6 +83,13 @@ var routes = [
     name: "Blog",
     icon: "nc-icon nc-single-02",
     component: <Blog/>,
+    layout: "/admin",
+  },
+  {
+    path: "/orders",
+    name: "Orders",
+    icon: "nc-icon nc-single-02",
+    component: <Orders/>,
     layout: "/admin",
   },
   // {
