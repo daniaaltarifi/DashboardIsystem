@@ -17,7 +17,7 @@
 
 */
 import axios from "axios";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 // reactstrap components
 import {
@@ -49,6 +49,31 @@ function AddProduct() {
   const [isUpdateFormVisible, setIsUpdateFormVisible] = useState(false);
   const [updateProductId, setUpdateProductId] = useState("");
   const [del, setDel] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [fileLimit, setFileLimit] = useState(false);
+  const MAX_COUNT = 5;
+
+  const handleUploadFiles = (files) => {
+    const uploaded = [...uploadedFiles];
+    let limitExceeded = false;
+    files.some((file) => {
+      if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+        uploaded.push(file);
+        if (uploaded.length === MAX_COUNT) setFileLimit(true);
+        if (uploaded.length > MAX_COUNT) {
+          alert(`You can only add a maximum of ${MAX_COUNT} files`);
+          setFileLimit(false);
+          limitExceeded = true;
+          return true;
+        }
+      }
+    });
+    if (!limitExceeded) setUploadedFiles(uploaded);
+  };
+  const handleFileEvent = (e) => {
+    const chosenFiles = Array.prototype.slice.call(e.target.files);
+    handleUploadFiles(chosenFiles);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -63,19 +88,16 @@ function AddProduct() {
   }, []);
   const handlePost = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:1010/product/add",
-        {
-          product_name,
-          price,
-          stock,
-          old_price,
-          category_id,
-          color_id,
-          img_main,
-          image_slider,
-        }
-      );
+      const response = await axios.post("http://localhost:1010/product/add", {
+        product_name,
+        price,
+        stock,
+        old_price,
+        category_id,
+        color_id,
+        img_main,
+        image_slider,
+      });
       console.log(response.data);
       // Call the onSave callback with the data
       setAdd(response.data);
@@ -99,7 +121,7 @@ function AddProduct() {
     image_slider
   ) => {
     try {
-        setUpdateProductId(p_id);
+      setUpdateProductId(p_id);
 
       const response = await axios.patch(
         `http://localhost:1010/product/edit/${p_id}`,
@@ -151,7 +173,7 @@ function AddProduct() {
                 <CardTitle tag="h5">Add Product</CardTitle>
               </CardHeader>
               <CardBody>
-                <Form >
+                <Form>
                   <Row>
                     <Col className="px-1" md="3">
                       <FormGroup>
@@ -227,8 +249,18 @@ function AddProduct() {
                         <label>image slider</label>
                         <Input
                           type="file"
-                          onChange={(e) => setImgSlider(e.target.value)}
+                          multiple
+                          accept="application/pdf, image/png"
+                          onChange={handleFileEvent}
+                          disabled={fileLimit}
                         />
+                        <label htmlFor="fileUpload"></label>
+
+                        <div className="uploaded-files-list">
+                          {uploadedFiles.map((file) => (
+                            <div>{file.name}</div>
+                          ))}
+                        </div>
                       </FormGroup>
                     </Col>
                   </Row>
@@ -324,9 +356,9 @@ function AddProduct() {
                     </thead>
                     {add &&
                       Array.isArray(add) &&
-                      add.map((product,index) => (
+                      add.map((product, index) => (
                         <tbody key={product.p_id}>
-                          <tr >
+                          <tr>
                             <td>{product.product_name}</td>
                             <td>{product.price}</td>
                             <td>{product.stock}</td>
@@ -341,14 +373,17 @@ function AddProduct() {
                             </td>
                             <td>
                               <button
-                                 onClick={() =>
-                                    handleDelete(product.p_id,index) // Calling handleDelete with the product's _id and index
-                                  }
+                                onClick={
+                                  () => handleDelete(product.p_id, index) // Calling handleDelete with the product's _id and index
+                                }
                               >
                                 delete
                               </button>
-                              <button onClick={() => openUpdateForm(product.p_id)}>update</button>
-
+                              <button
+                                onClick={() => openUpdateForm(product.p_id)}
+                              >
+                                update
+                              </button>
                             </td>
                           </tr>
                         </tbody>
@@ -362,94 +397,94 @@ function AddProduct() {
         <Row>
           <Col md="12">
             <Card className="card-user">
-            {isUpdateFormVisible && (
+              {isUpdateFormVisible && (
                 <div>
-              <CardHeader>
-                <CardTitle tag="h5">Update Product</CardTitle>
-              </CardHeader>
-              <CardBody>
-                <Form>
-                  <Row>
-                    <Col className="px-1" md="3">
-                      <FormGroup>
-                        <label>Product Name</label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setProduct_name(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="px-1" md="3">
-                      <FormGroup>
-                        <label>Price</label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setPrice(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="4">
-                      <FormGroup>
-                        <label htmlFor="exampleInputEmail1">Stock </label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setStock(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pr-1" md="6">
-                      <FormGroup>
-                        <label>Old Price</label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setOld_price(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <FormGroup>
-                        <label>Category Id</label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setCategoryId(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pl-1" md="6">
-                      <FormGroup>
-                        <label>colorId</label>
-                        <Input
-                          type="text"
-                          onChange={(e) => setColorId(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col className="pl-1" md="6">
-                      <FormGroup>
-                        <label>img_main</label>
-                        <Input
-                          type="file"
-                          onChange={(e) => setImgMain(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className="pl-1" md="6">
-                      <FormGroup>
-                        <label>image slider</label>
-                        <Input
-                          type="file"
-                          onChange={(e) => setImgSlider(e.target.value)}
-                        />
-                      </FormGroup>
-                    </Col>
-                  </Row>
-                  {/* <Row>
+                  <CardHeader>
+                    <CardTitle tag="h5">Update Product</CardTitle>
+                  </CardHeader>
+                  <CardBody>
+                    <Form>
+                      <Row>
+                        <Col className="px-1" md="3">
+                          <FormGroup>
+                            <label>Product Name</label>
+                            <Input
+                              type="text"
+                              onChange={(e) => setProduct_name(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="px-1" md="3">
+                          <FormGroup>
+                            <label>Price</label>
+                            <Input
+                              type="text"
+                              onChange={(e) => setPrice(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="pl-1" md="4">
+                          <FormGroup>
+                            <label htmlFor="exampleInputEmail1">Stock </label>
+                            <Input
+                              type="text"
+                              onChange={(e) => setStock(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="pr-1" md="6">
+                          <FormGroup>
+                            <label>Old Price</label>
+                            <Input
+                              type="text"
+                              onChange={(e) => setOld_price(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="pl-1" md="6">
+                          <FormGroup>
+                            <label>Category Id</label>
+                            <Input
+                              type="text"
+                              onChange={(e) => setCategoryId(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="pl-1" md="6">
+                          <FormGroup>
+                            <label>colorId</label>
+                            <Input
+                              type="text"
+                              onChange={(e) => setColorId(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col className="pl-1" md="6">
+                          <FormGroup>
+                            <label>img_main</label>
+                            <Input
+                              type="file"
+                              onChange={(e) => setImgMain(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className="pl-1" md="6">
+                          <FormGroup>
+                            <label>image slider</label>
+                            <Input
+                              type="file"
+                              onChange={(e) => setImgSlider(e.target.value)}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      {/* <Row>
                  <Col md="12">
                    <FormGroup>
                      <label>Address</label>
@@ -500,31 +535,34 @@ function AddProduct() {
                    </FormGroup>
                  </Col>
                </Row> */}
-                  <Row>
-                    <div className="update ml-auto mr-auto">
-                      <Button
-                        className="btn-round"
-                        color="primary"
-                        type="button"
-                        onClick={()=>handleUpdate(    updateProductId,
-                            product_name,
-                            price,
-                            stock,
-                            old_price,
-                            category_id,
-                            color_id,
-                            img_main,
-                            image_slider)}
-                      >
-                        Update Product
-                      </Button>
-                    </div>
-                  </Row>
-                </Form>
-              </CardBody>
-              </div>
-                    )}
-
+                      <Row>
+                        <div className="update ml-auto mr-auto">
+                          <Button
+                            className="btn-round"
+                            color="primary"
+                            type="button"
+                            onClick={() =>
+                              handleUpdate(
+                                updateProductId,
+                                product_name,
+                                price,
+                                stock,
+                                old_price,
+                                category_id,
+                                color_id,
+                                img_main,
+                                image_slider
+                              )
+                            }
+                          >
+                            Update Product
+                          </Button>
+                        </div>
+                      </Row>
+                    </Form>
+                  </CardBody>
+                </div>
+              )}
             </Card>
           </Col>
         </Row>
